@@ -31,7 +31,7 @@ public class ClimbAuto extends SubsystemBase {
   private Compressor airow = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
   // add a piston for moving arm
-  private Solenoid piston = new Solenoid(compressorModule, armMoverPort);
+  private Solenoid climbPiston = new Solenoid(compressorModule, armMoverPort);
   
   // add a motor for lift
   private CANSparkMax liftMotor = new CANSparkMax(liftPort, MotorType.kBrushless);
@@ -39,8 +39,6 @@ public class ClimbAuto extends SubsystemBase {
   private RelativeEncoder liftEncoder = liftMotor.getEncoder();
   
   private SparkMaxPIDController liftController = liftMotor.getPIDController();
-
-
 
   public ClimbAuto () {
 
@@ -72,12 +70,12 @@ public class ClimbAuto extends SubsystemBase {
 
   // check if arm is fully reached backwards (if piston value = true)
   public boolean isReaching() {
-    return piston.get();
+    return climbPiston.get();
   }
 
   // method makes piston extend (makes the arm reach)
   public void reaching(boolean pistonReach) {
-    piston.set(pistonReach);
+    climbPiston.set(pistonReach);
   }
 
   public void extendLift () {
