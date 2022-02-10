@@ -27,9 +27,6 @@ public class ClimbAuto extends SubsystemBase {
   // add a limit switch on lift (to detect full extension)
   DigitalInput liftSwitch = new DigitalInput(1);
 
-  // add a compressor
-  private Compressor airow = new Compressor(0, PneumaticsModuleType.CTREPCM);
-
   // add a piston for moving arm
   private Solenoid climbPiston = new Solenoid(compressorModule, armMoverPort);
   

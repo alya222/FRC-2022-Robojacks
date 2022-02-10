@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.Compressor;
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 
 /**
@@ -44,6 +45,9 @@ public final class Constants {
     // creates variables for the lift speed moving up and down
     public static final double liftUpSpeed = 0.4;
     public static final double liftDownSpeed = -0.4;
+
+    // add a compressor
+    public Compressor airow = new Compressor(0, PneumaticsModuleType.CTREPCM);
 
 
     

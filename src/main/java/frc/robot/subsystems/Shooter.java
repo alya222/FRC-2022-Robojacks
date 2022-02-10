@@ -14,9 +14,6 @@ import static frc.robot.Constants.*;
 
 public class Shooter extends SubsystemBase {
 
-  // add a compressor
-  private Compressor airow = new Compressor(0, PneumaticsModuleType.CTREPCM);
-
   // add a piston for shooter
   private Solenoid shooterPiston = new Solenoid(compressorModule, shooterPort);
 
