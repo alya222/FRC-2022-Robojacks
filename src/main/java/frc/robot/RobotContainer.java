@@ -19,7 +19,8 @@ import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.ConditionalCommand;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.subsystems.ClimbAuto;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
+import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Shooter;
 
 // import RevDrivetrain subsystem
@@ -44,51 +45,74 @@ public class RobotContainer {
   private final RevDrivetrain rDrive = new RevDrivetrain();
 
   // climbAuto subsystem
-  private final ClimbAuto climbAuto = new ClimbAuto();
+  private final Climb climb = new Climb();
 
   private final Shooter shooter = new Shooter();
 
-  private SequentialCommandGroup climb = new SequentialCommandGroup(
-    
+  private SequentialCommandGroup climbAuto = new SequentialCommandGroup(
+  
     // sets arm piston to true, reaching arm out fully
-    new InstantCommand(()-> climbAuto.reaching(true)),
+    new InstantCommand(()-> climb.reaching(true)),
     
     /*could use encoders and a PID loop for smoother movements on lift*/
     
     // moves lift up at 40% speed until lift limit switch is hit
-    new RunCommand(() -> climbAuto.move(liftUpSpeed)).withInterrupt(climbAuto::isLiftExtended),
+    new RunCommand(() -> climb.move(liftUpSpeed)).withInterrupt(climb::isLiftExtended),
 
     // sets piston to false, moving arm back fully until it is vertical
-    new InstantCommand(()-> climbAuto.reaching(false)),
+    new InstantCommand(()-> climb.reaching(false)),
 
     // moves lift down at 40% speed until lift limit switch is pressed
-    new RunCommand(() -> climbAuto.move(liftDownSpeed)).withInterrupt(climbAuto::isHookEngaged),
+    new RunCommand(() -> climb.move(liftDownSpeed)).withInterrupt(climb::isHookEngaged),
     
   /** sequential command is repeated **/
 
     // sets arm piston to true, reaching arm out fully
-    new InstantCommand(()-> climbAuto.reaching(true)),
+    new InstantCommand(()-> climb.reaching(true)),
         
     // moves lift up at 40% speed until lift limit switch is hit
-    new RunCommand(() -> climbAuto.move(liftUpSpeed)).withInterrupt(climbAuto::isLiftExtended),
+    new RunCommand(() -> climb.move(liftUpSpeed)).withInterrupt(climb::isLiftExtended),
 
     // sets piston to false, moving arm back fully until it is vertical
-    new InstantCommand(()-> climbAuto.reaching(false)),
+    new InstantCommand(()-> climb.reaching(false)),
 
     // moves lift down at 40% speed until lift limit switch is pressed
-    new RunCommand(() -> climbAuto.move(liftDownSpeed)).withInterrupt(climbAuto::isHookEngaged)
-
+    new RunCommand(() -> climb.move(liftDownSpeed)).withInterrupt(climb::isHookEngaged)
+  
   );
 
   private SequentialCommandGroup shootThenGo = new SequentialCommandGroup(
     
     // shoot the cargo into the goal
-    new InstantCommand (() -> shooter.setShoot(true))
-    .andThen(new InstantCommand (() -> shooter.setShoot(false)))
+    new InstantCommand (() -> shooter.setShoot(true)),
+    new WaitCommand (shooterWaitTime),
+    new InstantCommand (() -> shooter.setShoot(false))
 
     // drive backwards at 50% speed for 5 seconds
-    .andThen(new RunCommand(() -> rDrive.getDifferentialDrive().tankDrive(-0.5, -0.5),rDrive).withTimeout(5))
+    .andThen(new RunCommand(() -> rDrive.getDifferentialDrive()
+    .tankDrive(autoDriveSpeed, autoDriveSpeed),rDrive).withTimeout(5))
 
+  );
+
+  private SequentialCommandGroup resetClimb = new SequentialCommandGroup(
+    
+    // set the piston back to original position
+    new InstantCommand(() -> climb.reaching(false)),
+
+    // move the lift down until it is at the farthest down position using PID loop
+    // -- this code causes the robot to stop teleop lift motor from functioning
+    // new RunCommand(() -> climb.liftPID(-5))
+
+    // move the lift down for a number of seconds 
+    /*-- used as place holder until functioning PID loop 
+    that does not interefere with teleop climb is implemented*/
+    new RunCommand(() -> climb.move(-0.1)).withTimeout(2)
+  );
+
+  private SequentialCommandGroup shoot = new SequentialCommandGroup(
+    new InstantCommand(()-> shooter.setShoot(true)),
+    new WaitCommand(shooterWaitTime),
+    new InstantCommand(()-> shooter.setShoot(false))
   );
 
   // drives the robot using joysticks
@@ -105,7 +129,7 @@ public class RobotContainer {
   // move the lift up and down with right and left triggers, respectively
   private Command moveArm = new RunCommand(
   
-    () -> climbAuto.move(xbox.getRawAxis(kRightTrigger.value) - xbox.getRawAxis(kLeftTrigger.value)), climbAuto);
+    () -> climb.move(xbox.getRawAxis(kRightTrigger.value) - xbox.getRawAxis(kLeftTrigger.value)), climb);
 
   public RobotContainer() {
 
@@ -113,7 +137,7 @@ public class RobotContainer {
     configureButtonBindings();
 
     // default to running moveArm and manualDrive
-    climbAuto.setDefaultCommand(moveArm);
+    climb.setDefaultCommand(moveArm);
     rDrive.setDefaultCommand(manualDrive);
 
   }
@@ -122,20 +146,24 @@ public class RobotContainer {
     
     // moves arm in when left bumper is pressed
     new JoystickButton(xbox, kLeftBumper.value)
-    .whenPressed(new InstantCommand (() -> climbAuto.reaching(false)));
+    .whenPressed(new InstantCommand (() -> climb.reaching(false)));
 
     // moves arm out when right bumper is pressed
     new JoystickButton(xbox, kRightBumper.value)
-    .whenPressed(new InstantCommand (() -> climbAuto.reaching(true)));
+    .whenPressed(new InstantCommand (() -> climb.reaching(true)));
 
     // shoots when Y is pressed
     new JoystickButton(xbox, kY.value)
-    .whenPressed(new InstantCommand (() -> shooter.setShoot(true))
-    .andThen(new InstantCommand (() -> shooter.setShoot(false))));
+    .whenPressed(shoot);
 
-    // runs auto limit switch code when A is pressed
+    // runs auto limit switch climb code when A is pressed
     new JoystickButton(xbox, kA.value)
-    .whenPressed(climb);
+    .whenPressed(climbAuto);
+
+    //cancels auto limit switch climb code when B is pressed
+    new JoystickButton(xbox, kX.value)
+    .whenPressed(resetClimb)
+    .cancelWhenPressed(climbAuto);
 
   }
 

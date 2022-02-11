@@ -18,7 +18,7 @@ import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static frc.robot.Constants.*;
 
-public class ClimbAuto extends SubsystemBase {
+public class Climb extends SubsystemBase {
   /** Creates a new ClimAuto subsystem */
  
   // add a limit switch on stationary hook
@@ -37,7 +37,7 @@ public class ClimbAuto extends SubsystemBase {
   
   private SparkMaxPIDController liftController = liftMotor.getPIDController();
 
-  public ClimbAuto () {
+  public Climb () {
 
     //liftEncoder.setPositionConversionFactor(5);
 
@@ -83,7 +83,9 @@ public class ClimbAuto extends SubsystemBase {
     liftMotor.set (-.4);
   }
 
-
+  public void liftPID (double rotations) {
+    liftController.setReference(rotations, CANSparkMax.ControlType.kPosition);
+  }
 
   @Override
   public void periodic() {

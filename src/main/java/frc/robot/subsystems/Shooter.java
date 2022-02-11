@@ -21,8 +21,12 @@ public class Shooter extends SubsystemBase {
   public Shooter() {
   }
 
-  public void setShoot (boolean shoot) {
+  public void setShoot(boolean shoot) {
       shooterPiston.set(shoot);
+  }
+
+  public boolean shootPistonExtended() {
+    return shooterPiston.get();
   }
 
   @Override

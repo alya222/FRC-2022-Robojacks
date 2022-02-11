@@ -33,6 +33,9 @@ public final class Constants {
     // assign port number to lift motor
     public static final int liftPort = 5;
 
+    // add a compressor
+    public Compressor airow = new Compressor(0, PneumaticsModuleType.CTREPCM);
+
     // assign port number to compressor
     public static final PneumaticsModuleType compressorModule = PneumaticsModuleType.CTREPCM;
     
@@ -46,9 +49,10 @@ public final class Constants {
     public static final double liftUpSpeed = 0.4;
     public static final double liftDownSpeed = -0.4;
 
-    // add a compressor
-    public Compressor airow = new Compressor(0, PneumaticsModuleType.CTREPCM);
+    // shooter wait time in seconds
+    public static final double shooterWaitTime = 0.5;
 
-
+    // speed of autonomous backing up in percent
+    public static final double autoDriveSpeed = -0.4;
     
 }
