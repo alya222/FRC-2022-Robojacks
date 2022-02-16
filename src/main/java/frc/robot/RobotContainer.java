@@ -23,6 +23,16 @@ import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.subsystems.Climb;
 import frc.robot.subsystems.Shooter;
 
+/**
+ * CPA Import the Commands Directory
+ * or jus the command
+ */
+import frc.robot.Commands.*;
+//or
+//import frc.robot.Commands.manual_Drive;
+
+
+
 // import RevDrivetrain subsystem
 import frc.robot.subsystems.RevDrivetrain;
 
@@ -116,7 +126,10 @@ public class RobotContainer {
   );
 
   // drives the robot using joysticks
-  private Command manualDrive = new RunCommand(
+  /**
+   * CPA Now uses the manual_Drive Command
+   */
+  /* private Command manualDrive = new RunCommand(
     
     () -> rDrive.getDifferentialDrive().
     tankDrive(rDrive.deadband(xbox.getRawAxis(kLeftY.value), percentDeadband), 
@@ -124,7 +137,7 @@ public class RobotContainer {
     false
     ),
     rDrive
-    );
+    ); */
 
   // move the lift up and down with right and left triggers, respectively
   private Command moveArm = new RunCommand(
@@ -138,7 +151,13 @@ public class RobotContainer {
 
     // default to running moveArm and manualDrive
     climb.setDefaultCommand(moveArm);
-    rDrive.setDefaultCommand(manualDrive);
+
+    /**
+     * CPA
+     * 
+     * Inject the Controlers using the Lamda () -> "Function"
+     */
+    rDrive.setDefaultCommand(new manual_Drive(() -> xbox.getRawAxis(kLeftY.value),() -> xbox.getRawAxis(kRightY.value), rDrive));
 
   }
 
