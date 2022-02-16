@@ -52,4 +52,16 @@ public class RevDrivetrain extends SubsystemBase {
   @Override
   public void periodic() {
   }
+
+
+  /**
+   * CPA Added this to contol the Tank Drive from the New manual_Drive command
+   * 
+   * 
+   * @param leftSpeed
+   * @param rightSpeed
+   */
+  public void set_tankDrive(double leftSpeed, double rightSpeed) {
+    roboDrive.tankDrive(leftSpeed, rightSpeed);
+  }
 }
