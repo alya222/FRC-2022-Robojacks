@@ -27,8 +27,10 @@ public class Climb extends SubsystemBase {
   // add a limit switch on lift (to detect full extension)
   DigitalInput liftSwitch = new DigitalInput(1);
 
-  // add a piston for moving arm
-  private Solenoid climbPiston = new Solenoid(compressorModule, armMoverPort);
+  // add a piston for moving right arm
+  private Solenoid rightClimbPiston = new Solenoid(compressorModule, rightArmMoverPort);
+
+  private Solenoid leftClimbPiston = new Solenoid(compressorModule, leftArmMoverPort);
   
   // add a motor for lift
   private CANSparkMax liftMotor = new CANSparkMax(liftPort, MotorType.kBrushless);
@@ -67,12 +69,13 @@ public class Climb extends SubsystemBase {
 
   // check if arm is fully reached backwards (if piston value = true)
   public boolean isReaching() {
-    return climbPiston.get();
+    return rightClimbPiston.get();
   }
 
   // method makes piston extend (makes the arm reach)
   public void reaching(boolean pistonReach) {
-    climbPiston.set(pistonReach);
+    rightClimbPiston.set(pistonReach);
+    leftClimbPiston.set(pistonReach);
   }
 
   public void extendLift () {

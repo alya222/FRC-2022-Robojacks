@@ -40,10 +40,11 @@ public final class Constants {
     public static final PneumaticsModuleType compressorModule = PneumaticsModuleType.CTREPCM;
     
     // assign port number to arm piston
-    public static final int armMoverPort = 0;
+    public static final int rightArmMoverPort = 1;
+    public static final int leftArmMoverPort = 2;
 
     // assign port number to shooter piston
-    public static final int shooterPort = 1;
+    public static final int shooterPort = 0;
 
     // creates variables for the lift speed moving up and down
     public static final double liftUpSpeed = 0.4;
