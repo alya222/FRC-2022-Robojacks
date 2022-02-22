@@ -28,7 +28,7 @@ public final class Constants {
 	public static final int kRightFrontPort = 3;
 	public static final int kRightRearPort = 4;
 
-	public static final double percentDeadband = 0.05;
+	public static final double percentDeadband = 0.08;
 
     // assign port number to lift motor
     public static final int liftPort = 5;
@@ -44,7 +44,9 @@ public final class Constants {
     public static final int leftArmMoverPort = 2;
 
     // assign port number to shooter piston
-    public static final int shooterPort = 0;
+    public static final int shooterPistonPort = 0;
+
+    public static final int shooterMotorPort = 6;
 
     // creates variables for the lift speed moving up and down
     public static final double liftUpSpeed = 0.4;
@@ -52,6 +54,9 @@ public final class Constants {
 
     // shooter wait time in seconds
     public static final double shooterWaitTime = 0.5;
+
+    //speed of shooter
+    public static final double shooterSpeed = 0.8;
 
     // speed of autonomous backing up in percent
     public static final double autoDriveSpeed = -0.4;

@@ -84,9 +84,17 @@ public class RobotContainer {
   private SequentialCommandGroup shootThenGo = new SequentialCommandGroup(
     
     // shoot the cargo into the goal
-    new InstantCommand (() -> shooter.setShoot(true)),
-    new WaitCommand (shooterWaitTime),
-    new InstantCommand (() -> shooter.setShoot(false))
+    new RunCommand (() -> shooter.runShootMotor(shooterSpeed/2))
+    .withTimeout(shooterWaitTime),
+    
+    new InstantCommand(()-> shooter.setShootPiston(true)),
+    
+    new RunCommand(() -> shooter.runShootMotor(shooterSpeed))
+    .withTimeout(shooterWaitTime*2),
+    
+    new InstantCommand(()-> shooter.setShootPiston(false)),
+    
+    new RunCommand (() -> shooter.runShootMotor(0)).withTimeout(0.0005)
 
     // drive backwards at 50% speed for 5 seconds
     .andThen(new RunCommand(() -> rDrive.getDifferentialDrive()
@@ -110,9 +118,17 @@ public class RobotContainer {
   );
 
   private SequentialCommandGroup shoot = new SequentialCommandGroup(
-    new InstantCommand(()-> shooter.setShoot(true)),
-    new WaitCommand(shooterWaitTime),
-    new InstantCommand(()-> shooter.setShoot(false))
+    new RunCommand (() -> shooter.runShootMotor(shooterSpeed/2))
+    .withTimeout(shooterWaitTime),
+    
+    new InstantCommand(()-> shooter.setShootPiston(true)),
+    
+    new RunCommand(() -> shooter.runShootMotor(shooterSpeed))
+    .withTimeout(shooterWaitTime*2),
+    
+    new InstantCommand(()-> shooter.setShootPiston(false)),
+    
+    new RunCommand (() -> shooter.runShootMotor(0)).withTimeout(0.0005)
   );
 
   // drives the robot using joysticks
@@ -129,7 +145,8 @@ public class RobotContainer {
   // move the lift up and down with right and left triggers, respectively
   private Command moveArm = new RunCommand(
   
-    () -> climb.move(xbox.getRawAxis(kRightTrigger.value) - xbox.getRawAxis(kLeftTrigger.value)), climb);
+    () -> climb.move(xbox.getRawAxis(kRightTrigger.value) 
+      - xbox.getRawAxis(kLeftTrigger.value)), climb);
 
   public RobotContainer() {
 
